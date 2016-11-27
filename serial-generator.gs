@@ -19,8 +19,7 @@ function parseInternalFormatting(paragraph) {
   var regexp = new RegExp("<(.)>(.+?)</\\1>");
   
   var match = regexp.exec(paragraphTextString);  
-
-while (match != null) {
+  while (match != null) {
     Logger.log("match=" + match);
     var r = paragraphText.findText(RegExp.quote(match[2]));
     if (r != null) {
@@ -140,16 +139,23 @@ function generate() {
       // This removes first empty paragraph
       destBody.removeChild(destBody.getChild(0));
     }
+    // TODO below causes performance issues
     // Check if number of pages is even
-    doc.saveAndClose();
+    /*doc.saveAndClose();
     var pages = getNumPages(doc);
     doc = DocumentApp.openById(docId);
     destBody = doc.getBody();
     if (pages % 2 != 0) {
       destBody.appendPageBreak();
-    }
+    }*/
     // Continue loop
     r++;
     values = getRowAsArray(sourceSheet, r + 1);
+    Logger.log("r="+(r % 100));
+    if ((r % 50) == 0) {
+      doc.saveAndClose();
+      doc = DocumentApp.openById(docId);
+      destBody = doc.getBody();
+    }
   }
 }
